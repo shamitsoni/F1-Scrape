@@ -4,9 +4,9 @@ from standings import driver_standings, constructor_standings
 
 def main() -> None:
     # Prompts user for selection
-    print('What kind of data would you like?\n')
+    print('Welcome! Which type of F1 data would you like?')
     standing_type = input('(D) Driver Standings | (C) Constructor Standings: ')
-    year = int(input('Enter a year: '))
+    year = int(input('Enter a year [1950-2024]: '))
 
     # Raises an Exception if the year is invalid
     if not (1950 <= year <= 2024):

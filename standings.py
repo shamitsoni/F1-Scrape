@@ -1,3 +1,4 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 
@@ -39,6 +40,9 @@ def driver_standings(year: int) -> None:
     for i in range(4, len(team_and_point_data), 5):
         driver_points.append(team_and_point_data[i].text)
 
+    # Save file path for new file
+    file_path = os.path.abspath(f'{year}-driver-standings.txt')
+
     # Prints results to a new file
     with open(f'{year}-driver-standings.txt', 'w') as file:
         file.write(f'{year} FORMULA ONE DRIVER STANDINGS\n\n')
@@ -46,6 +50,9 @@ def driver_standings(year: int) -> None:
         for i in range(len(driver_names)):
             file.write(
                 f'#{i + 1:<{POS_WIDTH - 1}} {driver_names[i]:<{DRIVER_WIDTH}} {driver_teams[i]:<{TEAM_WIDTH}} {driver_points[i]:<{POINTS_WIDTH}}\n')
+
+    # Print message confirming completion and file path of saved data
+    print(f'Driver standings for {year} have been saved to {file_path}')
 
 
 def constructor_standings(year: int) -> None:
@@ -74,6 +81,9 @@ def constructor_standings(year: int) -> None:
     for i in range(2, len(constructor_data), 3):
         constructor_points.append(constructor_data[i].text)
 
+    # Save file path for new file
+    file_path = os.path.abspath(f'{year}-constructor-standings.txt')
+
     # Prints results to a new file
     with open(f'{year}-constructor-standings.txt', 'w') as file:
         file.write(f'{year} FORMULA ONE CONSTRUCTOR STANDINGS\n\n')
@@ -81,3 +91,6 @@ def constructor_standings(year: int) -> None:
         for i in range(len(constructors)):
             file.write(
                 f'#{i + 1:<{POS_WIDTH - 1}} {constructors[i]:<{TEAM_WIDTH}}  {constructor_points[i]:<{POINTS_WIDTH}}\n')
+
+    # Print message confirming completion and file path of saved data
+    print(f'Constructor standings for {year} have been saved to {file_path}')
