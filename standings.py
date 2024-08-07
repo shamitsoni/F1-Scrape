@@ -35,7 +35,7 @@ def driver_standings(year: int) -> None:
         driver_names.append(driver_data[i].text)
 
     for i in range(3, len(team_and_point_data), 5):
-        driver_teams.append(team_and_point_data[i].text)
+        driver_teams.append(team_and_point_data[i].text if team_and_point_data[i].text else 'N/A')
 
     for i in range(4, len(team_and_point_data), 5):
         driver_points.append(team_and_point_data[i].text)
