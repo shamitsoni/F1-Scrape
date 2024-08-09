@@ -2,6 +2,9 @@ from standings import driver_standings, constructor_standings
 import tkinter as tk
 from tkinter import messagebox
 
+# Defines the year for the ongoing F1 season
+CURRENT_YEAR = 2024
+
 
 def main() -> None:
     # Called if the user wishes to retrieve driver standings
@@ -11,6 +14,12 @@ def main() -> None:
         if not (1950 <= year <= 2024):
             messagebox.showerror(title='Invalid Year', message='Please enter a valid year between 1950 and 2024.')
             return
+
+        # Warns the user that stats can change for the ongoing season
+        if year == CURRENT_YEAR:
+            messagebox.showwarning(title='Stats in Progress', message='This season is currently ongoing! Stats are subject to change.')
+
+        # Retrieve Data
         driver_standings(year)
 
     # Called if the user wishes to retrieve constructor standings
@@ -20,6 +29,12 @@ def main() -> None:
         if not (1958 <= year <= 2024):
             messagebox.showerror(title='Invalid Year', message='Please enter a valid year between 1958 and 2024.')
             return
+
+        # Warns the user that stats can change for the ongoing season
+        if year == CURRENT_YEAR:
+            messagebox.showwarning(title='Stats in Progress', message='This season is currently ongoing! Stats are subject to change.')
+
+        # Retrieve Data
         constructor_standings(year)
 
     # Create instance of Tk class to act as the main GUI window
