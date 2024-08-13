@@ -14,38 +14,20 @@ def main() -> None:
     # Updates the color of buttons to indicate the selected option
     def update_button_styles() -> None:
         global selected_option
-        if selected_option == 'driver':
-            driver_button.config(bg='#34eb65')
-            constructor_button.config(bg='SystemButtonFace')
-            race_results_button.config(bg='SystemButtonFace')
-        elif selected_option == 'constructor':
-            constructor_button.config(bg='#34eb65')
-            driver_button.config(bg='SystemButtonFace')
-            race_results_button.config(bg='SystemButtonFace')
-        elif selected_option == 'race':
-            race_results_button.config(bg='#34eb65')
-            driver_button.config(bg='SystemButtonFace')
-            constructor_button.config(bg='SystemButtonFace')
-        else:
-            driver_button.config(bg='SystemButtonFace')
-            constructor_button.config(bg='SystemButtonFace')
-            race_results_button.config(bg='SystemButtonFace')
+        # Map each button to the selected option
+        button_map = {'driver': driver_button, 'constructor': constructor_button, 'race': race_results_button}
 
-    # Called if the user wishes to retrieve driver standings
-    def set_driver_standings() -> None:
-        global selected_option
-        selected_option = 'driver'
-        update_button_styles()
+        # Highlight the button corresponding to the selected option and un-highlight all other buttons
+        for option, button in button_map.items():
+            if selected_option == option:
+                button.config(bg='#34eb65')
+            else:
+                button.config(bg='SystemButtonFace')
 
-    # Called if the user wishes to retrieve constructor standings
-    def set_constructor_standings() -> None:
+    # Called to set the selected format option
+    def set_format_type(option: str) -> None:
         global selected_option
-        selected_option = 'constructor'
-        update_button_styles()
-
-    def set_race_results() -> None:
-        global selected_option
-        selected_option = 'race'
+        selected_option = option
         update_button_styles()
 
     # Check if the inserted year is a number
@@ -66,56 +48,30 @@ def main() -> None:
         else:
             year = int(year)
 
-        # If user selects get driver standings button
-        if selected_option == 'driver':
-            # Show an error message if the year is invalid
-            if not (1950 <= year <= 2024):
-                messagebox.showerror(title='Invalid WDC Year', message='Please enter a valid year between 1950 and 2024.')
-                return
-
-            # Warns the user that stats can change for the ongoing season
-            if year == CURRENT_YEAR:
-                messagebox.showwarning(title='Stats in Progress',
-                                       message='This season is currently ongoing! Stats are subject to change.')
-
-            # Retrieve Data
-            driver_standings(year)
-
-        # If user selects get constructor standings button
-        elif selected_option == 'constructor':
-            # Show an error message if the year is invalid
-            if not (1958 <= year <= 2024):
-                messagebox.showerror(title='Invalid WCC Year', message='Please enter a valid year between 1958 and 2024.')
-                return
-
-            # Warns the user that stats can change for the ongoing season
-            if year == CURRENT_YEAR:
-                messagebox.showwarning(title='Stats in Progress',
-                                       message='This season is currently ongoing! Stats are subject to change.')
-
-            # Retrieve Data
-            constructor_standings(year)
-
-        # If user selects get constructor standings button
-        elif selected_option == 'race':
-            # Show an error message if the year is invalid
-            if not (1950 <= year <= 2024):
-                messagebox.showerror(title='Invalid WDC Year',
-                                     message='Please enter a valid year between 1950 and 2024.')
-                return
-
-            # Warns the user that stats can change for the ongoing season
-            if year == CURRENT_YEAR:
-                messagebox.showwarning(title='Stats in Progress',
-                                       message='This season is currently ongoing! Stats are subject to change.')
-
-            # Retrieve Data
-            race_results(year)
-
-        # If the user tries to retrieve data without selecting an option
+        # Sets the ranges for valid years based on the format type
+        if selected_option == 'constructor':
+            min_year, max_year = 1958, 2024
         else:
-            messagebox.showerror(title='No Option Selected',
-                                 message='Please select a standings format before requesting data!')
+            min_year, max_year = 1950, 2024
+
+        # Gives error if the user picks an invalid year
+        if not (min_year <= year <= max_year):
+            messagebox.showerror(title='Invalid Year', message=f'Please enter a valid year between {min_year} and {max_year}.')
+            return
+
+        # Gives warning if the user picks the current season
+        if year == CURRENT_YEAR:
+            messagebox.showwarning(title='Stats in Progress',
+                                   message='This season is currently ongoing! Stats are subject to change.')
+
+        # Map options to corresponding functions
+        format_map = {'driver': driver_standings, 'constructor': constructor_standings, 'race': race_results}
+
+        # Send an error if the user tries to retrieve data without selecting an option
+        if selected_option not in format_map.keys():
+            messagebox.showerror(title='No Option Selected', message='Please select a standings format before requesting data!')
+        else:
+            format_map[selected_option](year)
 
     # Create instance of Tk class to act as the main GUI window
     window = tk.Tk()
@@ -128,15 +84,15 @@ def main() -> None:
     year_entry.grid(row=0, column=1, columnspan=2, padx=10, pady=10)
 
     # Button to select driver standings
-    driver_button = tk.Button(window, text="Get Driver Standings [1950-2024]", command=set_driver_standings)
+    driver_button = tk.Button(window, text="Get Driver Standings [1950-2024]", command=lambda: set_format_type('driver'))
     driver_button.grid(row=1, column=0, padx=10, pady=10)
 
     # Button to select constructor standings
-    constructor_button = tk.Button(window, text="Get Constructor Standings [1958-2024]", command=set_constructor_standings)
+    constructor_button = tk.Button(window, text="Get Constructor Standings [1958-2024]", command=lambda: set_format_type('constructor'))
     constructor_button.grid(row=1, column=1, padx=10, pady=10)
 
     # Button to select race results
-    race_results_button = tk.Button(window, text="Get Race Results [1950-2024]", command=set_race_results)
+    race_results_button = tk.Button(window, text="Get Race Results [1950-2024]", command=lambda: set_format_type('race'))
     race_results_button.grid(row=1, column=2, padx=10, pady=10)
 
     # Button to retrieve standings
