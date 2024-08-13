@@ -1,7 +1,7 @@
 import os
 import requests
 from bs4 import BeautifulSoup
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 
 # Constants defined to store column widths for output file
 POS_WIDTH = 5
@@ -34,7 +34,14 @@ def driver_standings(year: int) -> None:
     for i in range(4, len(team_and_point_data), 5):
         driver_points.append(team_and_point_data[i].text)
 
-    file_path = os.path.abspath(f'{year}-driver-standings.txt')
+    # Open file save dialog
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt",
+                                             filetypes=[("Text files", "*.txt")],
+                                             title="Save Driver Standings As",
+                                             initialfile=f'{year}-driver-standings.txt')
+    if not file_path:
+        return
+
     with open(file_path, 'w') as file:
         file.write(f'{year} FORMULA ONE DRIVER STANDINGS\n\n')
         file.write(f'{"POS":<{POS_WIDTH}} {"DRIVER":<{DRIVER_WIDTH}} {"TEAM":<{TEAM_WIDTH}} {"PTS":<{POINTS_WIDTH}}\n')
@@ -63,7 +70,14 @@ def constructor_standings(year: int) -> None:
     for i in range(2, len(constructor_data), 3):
         constructor_points.append(constructor_data[i].text)
 
-    file_path = os.path.abspath(f'{year}-constructor-standings.txt')
+    # Open file save dialog
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt",
+                                             filetypes=[("Text files", "*.txt")],
+                                             title="Save Constructor Standings As",
+                                             initialfile=f'{year}-constructor-standings.txt')
+    if not file_path:
+        return
+
     with open(file_path, 'w') as file:
         file.write(f'{year} FORMULA ONE CONSTRUCTOR STANDINGS\n\n')
         file.write(f'{"POS":<{POS_WIDTH}} {"CONSTRUCTOR":<{TEAM_WIDTH}}  {"PTS":<{POINTS_WIDTH}}\n')
@@ -71,5 +85,3 @@ def constructor_standings(year: int) -> None:
             file.write(f'#{i + 1:<{POS_WIDTH - 1}} {constructors[i]:<{TEAM_WIDTH}}  {constructor_points[i]:<{POINTS_WIDTH}}\n')
 
     messagebox.showinfo("Success", f'Constructor standings for {year} have been saved to {file_path}')
-
-

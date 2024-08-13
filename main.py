@@ -86,7 +86,7 @@ def main() -> None:
         # If the user tries to retrieve data without selecting an option
         else:
             messagebox.showerror(title='No Option Selected',
-                                   message='Please select a standings format before requesting data!')
+                                 message='Please select a standings format before requesting data!')
 
     # Create instance of Tk class to act as the main GUI window
     window = tk.Tk()
