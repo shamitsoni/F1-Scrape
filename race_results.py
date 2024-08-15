@@ -1,6 +1,8 @@
 import requests
+import pandas as pd
 from bs4 import BeautifulSoup
 from tkinter import messagebox, filedialog
+from save_file import save_to_txt, export_to_excel
 
 # Constants defined to store column widths for output file
 RACE_WIDTH = 18
@@ -11,7 +13,7 @@ LAP_WIDTH = 8
 TIME_WIDTH = 8
 
 
-def race_results(year: int) -> None:
+def race_results(year: int, save_type: str) -> None:
     # Attempt to retrieve data from site
     try:
         site = requests.get(f'https://www.formula1.com/en/results/{year}/races')
@@ -46,22 +48,29 @@ def race_results(year: int) -> None:
     for i in range(len(winner_data)):
         winner.append(winner_data[i].text)
 
-    # Save file to specific path
-    file_path = filedialog.asksaveasfilename(defaultextension=".txt",
-                                             filetypes=[("Text files", "*.txt")],
-                                             title="Save Race Results As",
-                                             initialfile=f'{year}-race-results.txt')
-    if not file_path:
-        return
+    # If the user wishes to save the file to their PC
+    if save_type == 'download':
+        # Set up arguments
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt",
+                                                 filetypes=[("Text files", "*.txt")],
+                                                 title="Save Race Results As",
+                                                 initialfile=f'{year}-race-results.txt')
+        headers = ['RACE', 'DATE', 'WINNER', 'TEAM', 'LAPS', 'TIME']
+        data = [race, date, winner, team, laps, time]
+        column_widths = [RACE_WIDTH, DATE_WIDTH, DRIVER_WIDTH, TEAM_WIDTH, LAP_WIDTH, TIME_WIDTH]
 
-    # Print results to a new file
-    with open(f'{year}-race-results.txt', 'w') as file:
-        file.write(f'{year} FORMULA ONE RACE RESULTS\n\n')
-        file.write(
-            f'{"RACE":<{RACE_WIDTH}} {"DATE":<{DATE_WIDTH}} {"WINNER":<{DRIVER_WIDTH}} {"TEAM":<{TEAM_WIDTH}} {"LAPS":<{LAP_WIDTH}} {"TIME":<{TIME_WIDTH}}\n')
-        for i in range(len(race)):
-            file.write(
-                f'{race[i]:<{RACE_WIDTH}} {date[i]:<{DATE_WIDTH}} {winner[i]:<{DRIVER_WIDTH}} {team[i]:<{TEAM_WIDTH}} {laps[i]:<{LAP_WIDTH}} {time[i]:<{TIME_WIDTH}}\n')
+        # Call to function
+        save_to_txt(file_path, headers, data, column_widths, year)
 
-    # Show confirmation message
-    messagebox.showinfo("Success", f'Race results for {year} have been saved to {file_path}')
+    # If the user wishes to export the file to a spreadsheet
+    else:
+        # Set up arguments
+        file_path = filedialog.asksaveasfilename(defaultextension=".xlsx",
+                                                 filetypes=[("Excel files", "*.xlsx")],
+                                                 title="Save Race Results As",
+                                                 initialfile=f'{year}-race-results.xlsx')
+        data = {'Race': race, 'Date': date, 'Winner': winner, 'Team': team, 'Laps': laps, 'Time': time}
+        df = pd.DataFrame(data)
+
+        # Call to function
+        export_to_excel(file_path, df, year)

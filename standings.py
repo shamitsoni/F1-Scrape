@@ -1,6 +1,8 @@
 import requests
+import pandas as pd
 from bs4 import BeautifulSoup
 from tkinter import messagebox, filedialog
+from save_file import save_to_txt, export_to_excel
 
 # Constants defined to store column widths for output file
 POS_WIDTH = 5
@@ -9,7 +11,7 @@ TEAM_WIDTH = 30
 POINTS_WIDTH = 5
 
 
-def driver_standings(year: int) -> None:
+def driver_standings(year: int, save_type: str) -> None:
     # Attempt to retrieve data from site
     try:
         site = requests.get(f'https://www.formula1.com/en/results.html/{year}/drivers.html')
@@ -24,6 +26,7 @@ def driver_standings(year: int) -> None:
     driver_names = []
     driver_teams = []
     driver_points = []
+    driver_pos = [i for i in range(1, len(driver_names) + 1)]
 
     # Driver data to be parsed
     driver_data = d_standings.find_all('span', class_='max-tablet:hidden')
@@ -39,26 +42,33 @@ def driver_standings(year: int) -> None:
     for i in range(4, len(team_and_point_data), 5):
         driver_points.append(team_and_point_data[i].text)
 
-    # Save file to specific path
-    file_path = filedialog.asksaveasfilename(defaultextension=".txt",
-                                             filetypes=[("Text files", "*.txt")],
-                                             title="Save Driver Standings As",
-                                             initialfile=f'{year}-driver-standings.txt')
-    if not file_path:
-        return
+    if save_type == 'download':
+        # Set up arguments
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt",
+                                                 filetypes=[("Text files", "*.txt")],
+                                                 title="Save Driver Standings As",
+                                                 initialfile=f'{year}-driver-standings.txt')
+        headers = ['POS', 'DRIVER', 'TEAM', 'PTS']
+        data = [driver_pos, driver_names, driver_teams, driver_points]
+        column_widths = [POS_WIDTH, DRIVER_WIDTH, TEAM_WIDTH, POS_WIDTH]
 
-    # Print results to a new file
-    with open(file_path, 'w') as file:
-        file.write(f'{year} FORMULA ONE DRIVER STANDINGS\n\n')
-        file.write(f'{"POS":<{POS_WIDTH}} {"DRIVER":<{DRIVER_WIDTH}} {"TEAM":<{TEAM_WIDTH}} {"PTS":<{POINTS_WIDTH}}\n')
-        for i in range(len(driver_names)):
-            file.write(f'#{i + 1:<{POS_WIDTH - 1}} {driver_names[i]:<{DRIVER_WIDTH}} {driver_teams[i]:<{TEAM_WIDTH}} {driver_points[i]:<{POINTS_WIDTH}}\n')
+        # Call to function
+        save_to_txt(file_path, headers, data, column_widths, year)
 
-    # Show confirmation message
-    messagebox.showinfo("Success", f'Driver standings for {year} have been saved to {file_path}')
+    else:
+        # Set up arguments
+        file_path = filedialog.asksaveasfilename(defaultextension=".xlsx",
+                                                 filetypes=[("Excel files", "*.xlsx")],
+                                                 title="Save Race Results As",
+                                                 initialfile=f'{year}-race-results.xlsx')
+        data = {'Pos': driver_pos, 'Driver': driver_names, 'Team': driver_teams, 'Pts': driver_points}
+        df = pd.DataFrame(data)
+
+        # Call to function
+        export_to_excel(file_path, df, year)
 
 
-def constructor_standings(year: int) -> None:
+def constructor_standings(year: int, save_type: str) -> None:
     # Attempt to retrieve data from site
     try:
         site = requests.get(f'https://www.formula1.com/en/results.html/{year}/team.html')
@@ -72,6 +82,7 @@ def constructor_standings(year: int) -> None:
     # Lists to store all relevant data
     constructors = []
     constructor_points = []
+    constructor_pos = [i for i in range(1, len(constructors) + 1)]
 
     # Constructor data to be parsed through
     constructor_data = c_standings.find_all('p', class_='f1-text font-titillium tracking-normal font-normal non-italic normal-case leading-none f1-text__micro text-fs-15px')
@@ -83,20 +94,26 @@ def constructor_standings(year: int) -> None:
     for i in range(2, len(constructor_data), 3):
         constructor_points.append(constructor_data[i].text)
 
-    # Save file to a specific path
-    file_path = filedialog.asksaveasfilename(defaultextension=".txt",
-                                             filetypes=[("Text files", "*.txt")],
-                                             title="Save Constructor Standings As",
-                                             initialfile=f'{year}-constructor-standings.txt')
-    if not file_path:
-        return
+    if save_type == 'download':
+        # Set up arguments
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt",
+                                                 filetypes=[("Text files", "*.txt")],
+                                                 title="Save Constructor Standings As",
+                                                 initialfile=f'{year}-constructor-standings.txt')
+        headers = ['POS', 'CONSTRUCTOR', 'PTS']
+        data = [constructor_pos, constructors, constructor_points]
+        column_widths = [POS_WIDTH, TEAM_WIDTH, POINTS_WIDTH]
 
-    # Prints results to a new file
-    with open(file_path, 'w') as file:
-        file.write(f'{year} FORMULA ONE CONSTRUCTOR STANDINGS\n\n')
-        file.write(f'{"POS":<{POS_WIDTH}} {"CONSTRUCTOR":<{TEAM_WIDTH}}  {"PTS":<{POINTS_WIDTH}}\n')
-        for i in range(len(constructors)):
-            file.write(f'#{i + 1:<{POS_WIDTH - 1}} {constructors[i]:<{TEAM_WIDTH}}  {constructor_points[i]:<{POINTS_WIDTH}}\n')
+        # Call to function
+        save_to_txt(file_path, headers, data, column_widths, year)
+    else:
+        # Set up arguments
+        file_path = filedialog.asksaveasfilename(defaultextension=".xlsx",
+                                                 filetypes=[("Excel files", "*.xlsx")],
+                                                 title="Save Constructor Standings As",
+                                                 initialfile=f'{year}-constructor-standings.xlsx')
+        data = {'Pos': constructor_pos, 'Constructor': constructors, 'Pts': constructor_points}
+        df = pd.DataFrame(data)
 
-    # Show confirmation message
-    messagebox.showinfo("Success", f'Constructor standings for {year} have been saved to {file_path}')
+        # Call to function
+        export_to_excel(file_path, df, year)

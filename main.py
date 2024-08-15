@@ -1,7 +1,7 @@
-from standings import driver_standings, constructor_standings
-from race_results import race_results
 import tkinter as tk
 from tkinter import messagebox
+from standings import driver_standings, constructor_standings
+from race_results import race_results
 
 # Defines the year for the ongoing F1 season
 CURRENT_YEAR = 2024
@@ -73,19 +73,19 @@ def main() -> None:
             messagebox.showerror(title='Invalid Year', message=f'Please enter a valid year between {min_year} and {max_year}.')
             return
 
-        # Gives warning if the user picks the current season
-        if year == CURRENT_YEAR:
-            messagebox.showwarning(title='Stats in Progress',
-                                   message='This season is currently ongoing! Stats are subject to change.')
-
         # Map options to corresponding functions
         format_map = {'driver': driver_standings, 'constructor': constructor_standings, 'race': race_results}
 
-        # Send an error if the user tries to retrieve data without selecting an option
+        # Send an error if the user tries to retrieve data without selecting a format type or save type
         if selected_option not in format_map.keys():
             messagebox.showerror(title='No Option Selected', message='Please select a standings format before requesting data!')
+        elif save_option is None:
+            messagebox.showerror(title='Save Data', message='Please select an option to save the data.')
         else:
-            format_map[selected_option](year)
+            # Gives warning if the user picks the current season, but allows them to proceed safely
+            if year == CURRENT_YEAR:
+                messagebox.showwarning(title='Stats in Progress', message='This season is currently ongoing! Stats are subject to change.')
+            format_map[selected_option](year, save_option)
 
     # Create instance of Tk class to act as the main GUI window
     window = tk.Tk()
@@ -118,7 +118,7 @@ def main() -> None:
     export.grid(row=0, column=0, padx=5, pady=5)
 
     # Button to select save to pc option
-    save = tk.Radiobutton(radio_frame, text='Save to PC', indicatoron=False, command=lambda: set_save_type('download'))
+    save = tk.Radiobutton(radio_frame, text='Save as txt', indicatoron=False, command=lambda: set_save_type('download'))
     save.grid(row=0, column=1, padx=5, pady=5)
 
     # Button to retrieve standings
