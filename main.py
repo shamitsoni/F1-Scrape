@@ -8,6 +8,7 @@ CURRENT_YEAR = 2024
 
 # Store the selected format type
 selected_option = None
+save_option = None
 
 
 def main() -> None:
@@ -24,11 +25,24 @@ def main() -> None:
             else:
                 button.config(bg='SystemButtonFace')
 
+    def update_radio_styles() -> None:
+        button_map = {'export': export, 'download': save}
+        for option, button in button_map.items():
+            if save_option == option:
+                button_map[option].config(indicatoron=True)
+            else:
+                button_map[option].config(indicatoron=False)
+
     # Called to set the selected format option
     def set_format_type(option: str) -> None:
         global selected_option
         selected_option = option
         update_button_styles()
+
+    def set_save_type(choice: str) -> None:
+        global save_option
+        save_option = choice
+        update_radio_styles()
 
     # Check if the inserted year is a number
     def valid_year(year: str) -> bool:
@@ -95,9 +109,21 @@ def main() -> None:
     race_results_button = tk.Button(window, text="Get Race Results [1950-2024]", command=lambda: set_format_type('race'))
     race_results_button.grid(row=1, column=2, padx=10, pady=10)
 
+    # Frame to hold buttons for saving data
+    radio_frame = tk.Frame(window)
+    radio_frame.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
+
+    # Button to select export to spreadsheet option
+    export = tk.Radiobutton(radio_frame, text='Export to Spreadsheet', indicatoron=False, command=lambda: set_save_type('export'))
+    export.grid(row=0, column=0, padx=5, pady=5)
+
+    # Button to select save to pc option
+    save = tk.Radiobutton(radio_frame, text='Save to PC', indicatoron=False, command=lambda: set_save_type('download'))
+    save.grid(row=0, column=1, padx=5, pady=5)
+
     # Button to retrieve standings
     retrieve_button = tk.Button(window, text="Retrieve Standings", command=retrieve_standings, height=1, width=25, bg='#f2c7d3')
-    retrieve_button.grid(row=2, column=0, columnspan=3, padx=10, pady=10)
+    retrieve_button.grid(row=2, column=2, padx=10, pady=10)
 
     # Window will run until the user closes it, allowing users to request data multiple times
     window.mainloop()
