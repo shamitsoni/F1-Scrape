@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 from tkinter import messagebox, filedialog
-from save_file import save_to_txt, export_to_excel
+from src.save_file import save_to_txt, export_to_excel
 
 # Constants defined to store column widths for output file
 POS_WIDTH = 5
