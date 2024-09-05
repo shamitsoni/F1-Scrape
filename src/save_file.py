@@ -6,7 +6,7 @@ def save_to_txt(file_path, headers, data, column_widths, year):
         return
 
     with open(file_path, 'w') as file:
-        file.write(f'{headers[0]} FORMULA ONE RESULTS\n\n')
+        file.write(f'{year} FORMULA ONE RESULTS\n\n')
         header_line = ' '.join([f'{header:<{width}}' for header, width in zip(headers, column_widths)])
         file.write(header_line + '\n')
         for row in zip(*data):

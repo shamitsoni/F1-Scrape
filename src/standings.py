@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 from tkinter import messagebox, filedialog
-from src.save_file import save_to_txt, export_to_excel
+from save_file import save_to_txt, export_to_excel
 
 # Constants defined to store column widths for output file
 POS_WIDTH = 5
@@ -26,7 +26,6 @@ def driver_standings(year: int, save_type: str) -> None:
     driver_names = []
     driver_teams = []
     driver_points = []
-    driver_pos = [i for i in range(1, len(driver_names) + 1)]
 
     # Driver data to be parsed
     driver_data = d_standings.find_all('span', class_='max-tablet:hidden')
@@ -41,6 +40,8 @@ def driver_standings(year: int, save_type: str) -> None:
 
     for i in range(4, len(team_and_point_data), 5):
         driver_points.append(team_and_point_data[i].text)
+
+    driver_pos = [i for i in range(1, len(driver_names) + 1)]
 
     if save_type == 'download':
         # Set up arguments
@@ -82,7 +83,6 @@ def constructor_standings(year: int, save_type: str) -> None:
     # Lists to store all relevant data
     constructors = []
     constructor_points = []
-    constructor_pos = [i for i in range(1, len(constructors) + 1)]
 
     # Constructor data to be parsed through
     constructor_data = c_standings.find_all('p', class_='f1-text font-titillium tracking-normal font-normal non-italic normal-case leading-none f1-text__micro text-fs-15px')
@@ -93,6 +93,8 @@ def constructor_standings(year: int, save_type: str) -> None:
 
     for i in range(2, len(constructor_data), 3):
         constructor_points.append(constructor_data[i].text)
+
+    constructor_pos = [i for i in range(1, len(constructors) + 1)]
 
     if save_type == 'download':
         # Set up arguments
