@@ -14,7 +14,7 @@ def save_to_txt(file_path, headers, data, column_widths, year):
             file.write(line + '\n')
 
     # Show confirmation message
-    messagebox.showinfo("Success", f'F1 data for {year} have been saved to {file_path}')
+    messagebox.showinfo("Success", f'F1 data for {year} has been saved to {file_path}')
 
 
 def export_to_excel(file_path, df, year):
@@ -25,4 +25,4 @@ def export_to_excel(file_path, df, year):
     df.to_excel(file_path, index=False)
 
     # Show confirmation message
-    messagebox.showinfo("Success", f'F1 data for {year} have been saved to {file_path}')
+    messagebox.showinfo("Success", f'F1 data for {year} has been saved to {file_path}')

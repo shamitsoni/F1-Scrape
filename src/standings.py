@@ -62,7 +62,7 @@ def driver_standings(year: int, save_type: str) -> None:
                                                  filetypes=[("Excel files", "*.xlsx")],
                                                  title="Save Race Results As",
                                                  initialfile=f'{year}-race-results.xlsx')
-        data = {'Pos': driver_pos, 'Driver': driver_names, 'Team': driver_teams, 'Pts': driver_points}
+        data = {'POS': driver_pos, 'DRIVER': driver_names, 'TEAM': driver_teams, 'PTS': driver_points}
         df = pd.DataFrame(data)
 
         # Call to function
@@ -114,7 +114,7 @@ def constructor_standings(year: int, save_type: str) -> None:
                                                  filetypes=[("Excel files", "*.xlsx")],
                                                  title="Save Constructor Standings As",
                                                  initialfile=f'{year}-constructor-standings.xlsx')
-        data = {'Pos': constructor_pos, 'Constructor': constructors, 'Pts': constructor_points}
+        data = {'POS': constructor_pos, 'CONSTRUCTOR': constructors, 'PTS': constructor_points}
         df = pd.DataFrame(data)
 
         # Call to function

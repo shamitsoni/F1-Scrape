@@ -58,7 +58,7 @@ def race_results(year: int, save_type: str) -> None:
         headers = ['RACE', 'DATE', 'WINNER', 'TEAM', 'LAPS', 'TIME']
         data = [race, date, winner, team, laps, time]
         column_widths = [RACE_WIDTH, DATE_WIDTH, DRIVER_WIDTH, TEAM_WIDTH, LAP_WIDTH, TIME_WIDTH]
-        
+
         # Call to function
         save_to_txt(file_path, headers, data, column_widths, year)
 
@@ -69,7 +69,7 @@ def race_results(year: int, save_type: str) -> None:
                                                  filetypes=[("Excel files", "*.xlsx")],
                                                  title="Save Race Results As",
                                                  initialfile=f'{year}-race-results.xlsx')
-        data = {'Race': race, 'Date': date, 'Winner': winner, 'Team': team, 'Laps': laps, 'Time': time}
+        data = {'RACE': race, 'DATE': date, 'WINNER': winner, 'TEAM': team, 'LAPS': laps, 'TIME': time}
         df = pd.DataFrame(data)
 
         # Call to function
